@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:scrumpoker/screens/home.dart';
+import 'package:scrumpoker/screens/room.dart';
 import 'socket.dart';
 
 void main() {
@@ -18,13 +19,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ScrumPoker',
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(title: 'Scrum Poker'),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'ScrumPoker',
+        theme: ThemeData(
+          useMaterial3: true,
+          primarySwatch: Colors.blue,
+        ),
+        onGenerateRoute: (settings) {
+          if (settings.name == '/') {
+            if (Uri.base.pathSegments.isNotEmpty) {
+              return MaterialPageRoute(
+                builder: (context) =>
+                    RoomPage(roomId: Uri.base.pathSegments[0]),
+              );
+            } else {
+              return MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              );
+            }
+          } else {
+            return null;
+          }
+        });
   }
 }

@@ -3,27 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:scrumpoker/socket.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class RoomPage extends StatefulWidget {
+  const RoomPage({Key? key, this.roomId = ''}) : super(key: key);
+  final String roomId;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<RoomPage> createState() => _RoomPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  void validateAndJoin() {
+class _RoomPageState extends State<RoomPage> {
+  void join() {
     SocketApi socketApi = SocketApi();
-    print(socketApi.socket.id);
-    socketApi.newRoom();
-    final FormState? form = _formKey.currentState;
-    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-      _formKey.currentState?.save();
-      print('Form is valid');
-    } else {
-      print('Form is invalid');
-    }
+    socketApi.joinRoom(widget.roomId);
   }
 
   void newRoom() {
@@ -34,6 +25,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('roompage');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('ScrumPoker'),
@@ -55,29 +48,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 20),
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.3,
-            child: Form(
-              key: _formKey,
-              child: TextFormField(
-                decoration: InputDecoration(
-                  suffixIcon: InkWell(
-                    child: const Icon(Icons.arrow_forward_ios),
-                    onTap: validateAndJoin,
-                  ),
-                  labelText: 'Sala',
-                  hintText: 'Digite o numero da sala',
-                  border: const OutlineInputBorder(),
-                ),
-                onFieldSubmitted: (value) {
-                  validateAndJoin();
-                },
-                validator: (String? value) {
-                  if (value != null) {
-                    return 'Digite uma sala valida.';
-                  }
-                  return null;
-                },
-              ),
-            ),
           ),
           const SizedBox(height: 5),
           Center(
@@ -85,7 +55,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: validateAndJoin,
+                  onPressed: join,
                   child: const Text('Entrar'),
                 ),
                 const Text('ou'),

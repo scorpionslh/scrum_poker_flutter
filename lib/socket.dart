@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print, library_prefixes
 
-import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketApi {
@@ -13,7 +12,7 @@ class SocketApi {
   }
 
   IO.Socket socket = IO.io(
-    'ws://localhost:3001',
+    'http://localhost:3001',
     IO.OptionBuilder()
         .setTransports(['websocket'])
         .setTimeout(5000)
@@ -32,9 +31,19 @@ class SocketApi {
       print(data);
       print('new Room');
     });
+
+    _socketApi.socket.on('userJoined', (data) {
+      print(data);
+      print('userJoined');
+    });
   }
 
-  dynamic newRoom() {
-    return _socketApi.socket.emit('newRoom');
+  void newRoom() {
+    _socketApi.socket.emit('newRoom');
+  }
+
+  void joinRoom(String roomId) {
+    print('try joinRoom');
+    _socketApi.socket.emit('joinRoom', '{"room": $roomId }');
   }
 }
